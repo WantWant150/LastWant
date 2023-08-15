@@ -1,0 +1,65 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<head>
+    <link href="~/Mstyles/icofont.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Mstyles/Mbootstrap.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Mstyles/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Mstyles/Mstyle.css" asp-append-version="true" />
+
+
+    <style>
+        .a{
+            color:black
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="~/Images/LOGO.png" class="img-fluid" alt="Logo" width="80px" height="80px">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">首頁</a>
+                    </li>
+                    <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Task" asp-action="List">找工作</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">找專家</a>
+                    </li>
+                    <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Forum" asp-action="CategoryList">部落格</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Member" asp-action="MemberAccount">會員專區</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary me-md-2" asp-area="" asp-controller="" asp-action="">註冊</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary" asp-area="" asp-controller="" asp-action="">登入</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>                       

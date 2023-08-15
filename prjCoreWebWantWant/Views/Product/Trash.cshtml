@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Trash";
+    Layout = "~/Views/Member/LayoutForMem.cshtml";
+}
+
+
+<h2>垃圾桶</h2>
+<!-- 新增按鈕區域 -->
+<div class="container mt-4">
+
+    <div class="row mt-3">
+        <div class="d-flex">
+            <button type="button" class="btn btn-outline-danger">永久刪除</button>
+
+
+            <button type="button" class="btn btn-outline-danger">清空垃圾車</button>
+
+
+            <button type="button" class="btn btn-outline-warning">復原</button>
+
+
+            @*<button type="button" class="btn btn-primary" href="@Url.Content("~/product/list")">回到商品列表</button>*@
+            <a class="btn btn-outline-primary" href="@Url.Content("~/product/list")">回到商品列表</a>
+        </div>
+    </div>
+
+    <br>
+
+    <table id="table" class="table table-striped mt-3">
+        <thead align="center">
+            <tr>
+                <td><i class='bx bx-checkbox-minus' style="font-size: 1.3rem;"></i></td>
+                <td>商品</td>
+                <td>類別</td>
+                <td>復原</td>
+                <td>永久刪除</td>
+            </tr>
+        </thead>
+        <tbody align="center">
+            <tr>
+                <td><input type="checkbox" name="color1" value="blue"></td>
+                <td>500元</td>
+                <td>點數</td>
+                <td><a class='bx bx-reply bx-tada' style="font-size: 2rem; color:black"></a></td>
+                <td><a class='bx bx-trash bx-tada' style='color:#ea0b0b ; font-size: 2rem'></a></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="color1" value="blue"></td>
+                <td>1000元</td>
+                <td>點數商品</td>
+                <td><a class='bx bx-reply bx-tada' style="font-size: 2rem;"></a></td>
+                <td><i class='bx bx-trash bx-tada' style='color:#ea0b0b ; font-size: 2rem' /></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts{
+    @*box icons*@
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        td > a {
+            text-decoration: none;
+        }
+    </style>
+}
