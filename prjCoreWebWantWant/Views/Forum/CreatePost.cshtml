@@ -3,8 +3,9 @@
 @{
     ViewData["Title"] = "CreatePost";
 }
-
+<div class="container">
 <h1>發表文章</h1>
+
 
 @using (Html.BeginForm())
 {
@@ -47,9 +48,25 @@
     @Html.ActionLink("回上一頁", "PostList", new { categoryId = categoryId })
 </div>
 
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="~/lib/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea#tiny',
+            menubar: false,
+            plugins: [
+                'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
+                'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
+                'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | a11ycheck casechange blocks | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify |' +
+                'bullist numlist checklist outdent indent | removeformat | code table help'
+        })
+    </script>
 }
 
 

@@ -5,7 +5,7 @@ using prjCoreWantMember.ViewModels;
 using prjCoreWebWantWant.Models;
 using X.PagedList;
 
-namespace WantSoraCoreMVC.Controllers
+namespace WantTask.Controllers
 {
     public class ForumController : Controller
     {
@@ -16,28 +16,28 @@ namespace WantSoraCoreMVC.Controllers
         }
 
         int loginID = 56;//先綁死ID登入
-        NewIspanProjectContext db = new NewIspanProjectContext();
+        NewIspanProjectContext _db = new NewIspanProjectContext();
 
         // GET: Forum
         public IActionResult CategoryList()
         {
-            IEnumerable<ForumCategory> datas = from f in db.ForumCategories
+            IEnumerable<ForumCategory> datas = from f in _db.ForumCategories
                                                select f;
             return View(datas);
         }
 
 
 
-        public IActionResult PostList(int? categoryId, string OrderBy, string q,int page=1)
+        public IActionResult PostList(int? categoryId, string OrderBy, string q, int page = 1)
         {
             ViewBag.CurrentSort = OrderBy;
             ViewBag.CurrentQ = q;
-            
+
 
             if (categoryId == null)
                 return RedirectToAction("CategoryList");
 
-            var posts = from p in db.ForumPosts
+            var posts = from p in _db.ForumPosts
                         .Include(p => p.ForumPostCategories).ThenInclude(pc => pc.Category)
                         .Include(p => p.Account)
                         .Include(p => p.ForumPostComments).ThenInclude(c => c.StatusNavigation)
@@ -50,9 +50,9 @@ namespace WantSoraCoreMVC.Controllers
 
             if (!string.IsNullOrEmpty(q))
             {
-                posts=posts.Where(p=>p.Account.UserName.Contains(q)
+                posts = posts.Where(p => p.Account.UserName.Contains(q)
                                || p.Title.Contains(q)
-                               ||p.PostContent.Contains(q)
+                               || p.PostContent.Contains(q)
                 );
             }
 
@@ -70,12 +70,12 @@ namespace WantSoraCoreMVC.Controllers
             }
 
             ViewBag.CategoryId = categoryId;
-            ForumPostListModel viewmodel=new ForumPostListModel();
+            ForumPostListModel viewmodel = new ForumPostListModel();
             int pageSize = 10;
 
             var postIDs = posts.Select(p => p.PostId).ToList();
-            var replyCounts = db.ForumPosts
-                                .Where(p => postIDs.Contains(p.ParentId ?? 0)&&p.Status!=2)
+            var replyCounts = _db.ForumPosts
+                                .Where(p => postIDs.Contains(p.ParentId ?? 0) && p.Status != 2)
                                 .GroupBy(p => p.ParentId)
                                 .ToDictionary(g => g.Key ?? 0, g => g.Count());
 
@@ -86,34 +86,41 @@ namespace WantSoraCoreMVC.Controllers
 
         }
 
+
+
+
         public IActionResult PostView(int? postID)
         {
             if (postID == null)
                 return RedirectToAction("PostList");
 
-            var post = db.ForumPosts
+            var post = _db.ForumPosts
                         .Include(p => p.ForumPostCategories).ThenInclude(pc => pc.Category)
                         .Include(p => p.Account)
-                        .Where(p=>p.ParentId==null&&(p.Status==1||p.Status == 4))
+                        .Where(p => p.ParentId == null && (p.Status == 1 || p.Status == 4))
                         .FirstOrDefault(p => p.PostId == (int)postID);
 
-            var replies = db.ForumPosts
+            var replies = _db.ForumPosts
                         .Include(p => p.Account)
                         .Where(p => p.ParentId == postID)
-                        .Where(p=>p.ParentId== postID && (p.Status !=2))
+                        .Where(p => p.ParentId == postID && (p.Status != 2))
                         .ToList();
 
-            var postComment = db.ForumPostComments
+            var postComment = _db.ForumPostComments
                         .Include(c => c.Account)
                         .Where(c => c.PostId == postID && (c.Status == 1 || c.Status == 4))
                         .ToList();
 
             //todo 搜尋關鍵字後這邊會出錯
-            var postReply= db.ForumPostComments
-                          .Include(p => p.Account)
-                          .Where(p => p.PostId == replies.FirstOrDefault().PostId)
-                          .ToList();
 
+            List<ForumPostComment> postReply = new List<ForumPostComment>();
+            if (replies.FirstOrDefault() != null)
+            {
+                postReply = _db.ForumPostComments
+                         .Include(p => p.Account)
+                         .Where(p => p.PostId == replies.FirstOrDefault().PostId)
+                         .ToList();
+            }
 
 
 
@@ -122,7 +129,7 @@ namespace WantSoraCoreMVC.Controllers
             //-----------------------觀看次數-----------------------------
             int viewCount = 0;
             //建立MemoryCache，先確定是否有某篇文章的KEY存在
-            if (_memoryCache.TryGetValue("ViewCount_" + postID,out viewCount))
+            if (_memoryCache.TryGetValue("ViewCount_" + postID, out viewCount))
             {
                 viewCount = (int)_memoryCache.Get("ViewCount_" + postID);//有的話就抓key對應的value
             }
@@ -133,7 +140,7 @@ namespace WantSoraCoreMVC.Controllers
 
                 viewCount++;
                 post.ViewCount = viewCount;
-                db.SaveChanges();
+                _db.SaveChanges();
                 // 將觀看次數存入快取，設定快取時間，例如 1 小時
                 var cacheEntryOptions = new MemoryCacheEntryOptions
                 {
@@ -151,6 +158,8 @@ namespace WantSoraCoreMVC.Controllers
             return View(viewModel);
         }
 
+
+
         public IActionResult CreatePost(int? categoryId)
         {
             if (categoryId == null)
@@ -167,8 +176,8 @@ namespace WantSoraCoreMVC.Controllers
             x.Created = DateTime.Now;
             x.Status = 1;
             x.ViewCount = 0;
-            db.ForumPosts.Add(x);
-            db.SaveChanges();
+            _db.ForumPosts.Add(x);
+            _db.SaveChanges();
 
             int categoryId = 0;
             int.TryParse(Request.Query["categoryId"], out categoryId);
@@ -176,9 +185,18 @@ namespace WantSoraCoreMVC.Controllers
             ForumPostCategory category = new ForumPostCategory();
             category.PostId = x.PostId;
             category.CategoryId = categoryId;
-            db.ForumPostCategories.Add(category);
-            db.SaveChanges();
+            _db.ForumPostCategories.Add(category);
+            _db.SaveChanges();
             return RedirectToAction("PostList", new { categoryId = categoryId });
+        }
+
+
+
+
+        public IActionResult ForumMS()
+        {
+
+            return View();
         }
 
     }
